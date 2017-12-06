@@ -6,7 +6,7 @@ const isDevelopment: any = process.env.NODE_ENV !== 'production'
 
 // Global reference to mainWindow
 // Necessary to prevent win from being garbage collected
-let mainWindow
+let mainWindow: any;
 
 function createMainWindow() {
   // Construct new BrowserWindow
