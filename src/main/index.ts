@@ -1,6 +1,8 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron';
+import { Slide } from './components/slide/Slide';
+import * as ReactDOM from 'react-dom'
 
 const isDevelopment: any = process.env.NODE_ENV !== 'production'
 
