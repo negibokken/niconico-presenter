@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "jsx": "react"
-  },
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
-  "exclude": [
-    "./node_modules/electron/electron.d.ts"
-  ]
-}
