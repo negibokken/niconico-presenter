@@ -1,10 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-// import App from './App';
 import { setInterval, clearInterval } from 'timers';
+import { MyPdfViewer } from './MyPDFViewer';
 
-class Hello extends React.Component {
+const socket = new WebSocket(`ws://localhost:3000`);
+
+socket.addEventListener('open', e => {
+  socket.send('Hello Server!');
+});
+socket.addEventListener('message', e => {
+  console.log('message: ', e.data);
+});
+
+class Index extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -13,7 +22,7 @@ class Hello extends React.Component {
   }
   pushComment() {
     const comments = this.state.comments;
-    comments.push(`hello${comments.length}`);
+    comments.push(`hello ${comments.length}`);
     this.setState({
       comments
     });
@@ -24,9 +33,10 @@ class Hello extends React.Component {
   render() {
     return (
       <div>
-        hello world
-        {this.state.comments.map(i => {
-          return <Comment message={i} />;
+        <input type="file" id="files" name="files[]" multiple />
+        <MyPdfViewer />
+        {this.state.comments.map((v, i) => {
+          return <Comment key={i} message={v} />;
         })}
       </div>
     );
@@ -36,31 +46,32 @@ class Hello extends React.Component {
 class Comment extends React.Component {
   right = 0;
   move() {
-    console.log('interval');
-    if (this.right >= 5000) {
+    const comment = this.refs.comment;
+    const rect = comment.getBoundingClientRect();
+    if (rect.left <= 0) {
       clearInterval(this.timerID);
+      comment.parentNode.removeChild(comment);
       return;
     }
     this.right += 100;
-    this.refs.comment.style.right = `${this.right}px`;
+    comment.style.right = `${this.right}px`;
   }
   componentDidMount() {
     this.i = 0;
+    const rand = Math.random() * (600 - 0) + 0;
+    this.refs.comment.style.top = `${rand}px`;
     this.timerID = setInterval(this.move.bind(this), 100);
   }
   componentWillUnmount() {
     clearInterval(this.timerID);
   }
-  onClick() {
-    console.log(this.refs.comment);
-  }
   render() {
     return (
-      <div id="comment" ref="comment" onClick={this.onClick.bind(this)}>
+      <div className="comment" ref="comment">
         {this.props.message}
       </div>
     );
   }
 }
 
-ReactDOM.render(<Hello />, document.getElementById('root'));
+ReactDOM.render(<Index />, document.getElementById('root'));
