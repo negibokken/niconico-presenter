@@ -37,7 +37,7 @@ class SimpleTabs extends React.Component {
           </Tabs>
         </AppBar>
         現在のユーザー数: {this.props.userNum}
-        <CommentView />
+        {tab === 0 && <CommentView />}
         {tab === 1 && <CommentList />}
       </div>
     );
