@@ -4,10 +4,11 @@ import PDF from 'react-pdf-js';
 export class MyPdfViewer extends React.Component {
   state = {};
   componentDidMount() {
-    document.addEventListener('keydown', e => {
+    const $container = document.querySelector('#container');
+    $container.addEventListener('keydown', e => {
       e.preventDefault();
     });
-    document.addEventListener('keyup', e => {
+    $container.addEventListener('keyup', e => {
       e.preventDefault();
       switch (e.key) {
         case 'ArrowLeft':
