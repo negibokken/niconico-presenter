@@ -5,8 +5,8 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  MenuItem,
-  TextField
+  TextField,
+  Button
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import moment from 'moment';
@@ -56,9 +56,11 @@ class CommentList extends React.Component {
   handleChange = e => {
     this.props.sortComment(e.target.value, this.props.allComments);
   };
+  handleRenew = () => {
+    this.props.getComments(this.props.sortOption);
+  };
   handleClick = num => () => {
     this.props.addNice(num, this.props.sortOption);
-    this.handlePost('👍');
   };
   handlePost = value => {
     this.props.postComment(value);
@@ -81,8 +83,8 @@ class CommentList extends React.Component {
             }}
           >
             {[
-              { value: 1, label: 'No.順' },
-              { value: 2, label: '最新順' },
+              { value: 1, label: '最新順' },
+              { value: 2, label: 'No.順' },
               { value: 3, label: 'いいね順' }
             ].map(option => {
               return (
@@ -92,6 +94,14 @@ class CommentList extends React.Component {
               );
             })}
           </TextField>
+          <Button
+            variant="outlined"
+            aria-label="Renew"
+            onClick={this.handleRenew}
+            style={{ marginLeft: '20px' }}
+          >
+            更新
+          </Button>
         </form>
         {allComments.length !== 0 ? (
           <List style={styles.list}>
@@ -102,7 +112,6 @@ class CommentList extends React.Component {
                   key={i}
                   role={undefined}
                   dense
-                  button
                   style={{ width: '100%' }}
                 >
                   <ListItemText align={'left'} onClick={this.handleClick(v.id)}>

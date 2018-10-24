@@ -4,7 +4,7 @@ const initialState = {
   comments: [],
   allComments: [],
   tab: 0,
-  sortOption: 1,
+  sortOption: '1',
   userNum: 1
 };
 
@@ -30,6 +30,8 @@ export const reducer = (state = initialState, action) => {
       });
     case constants.GET_USER_NUM:
       return Object.assign({}, state, { userNum: action.payload });
+    case constants.RESET_COMMENT:
+      return Object.assign({}, state, { comments: [] });
     default:
       return state;
   }

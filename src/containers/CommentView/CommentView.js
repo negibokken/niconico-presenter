@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import CommentView from '../../components/CommentView/CommentView';
-import { postComment } from '../../actions/actions';
+import { postComment, resetComment } from '../../actions/actions';
 
 const mapStateToProps = state => {
   return {
@@ -12,6 +12,9 @@ const mapDispatchToProps = dispatch => {
   return {
     postComment: value => {
       dispatch(postComment(value));
+    },
+    resetComment: () => {
+      dispatch(resetComment());
     }
   };
 };

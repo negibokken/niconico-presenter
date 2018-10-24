@@ -4,5 +4,6 @@ export const constants = {
   GET_ALL_COMMENTS: 3,
   ADD_NICE: 4,
   SORT_COMMENT: 5,
-  GET_USER_NUM: 6
+  GET_USER_NUM: 6,
+  RESET_COMMENT: 7
 };

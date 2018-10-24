@@ -12,6 +12,7 @@ const logger = log4js.getLogger('cheese');
 const cookie = require('cookie');
 const knex = require('knex');
 const randomString = require('randomstring');
+const utils = require('./utils');
 
 const dbConfig = {
   host: process.env.DB_HOST,
@@ -76,34 +77,19 @@ server.on('request', async (req, res) => {
   } else if (!!req.url.match(/\/messages\/(\d+)/)) {
     const matched = req.url.match(/\/messages\/(\d+)/);
     const commentId = matched[1];
-    let comment = JSON.parse(
-      JSON.stringify(
-        await client('comment')
-          .select()
-          .where({ id: commentId })
-      )
-    )[0];
-    comment.nice += 1;
-    await client('nices')
-      .insert({ user_id: userId, comment_id: commentId })
-      .where({ id: commentId });
-    await client('comment')
-      .update({ nice: comment.nice })
-      .where({ id: commentId });
-    const comments = JSON.parse(
-      JSON.stringify(await client('comment').select())
-    );
+    await client('nices').insert({ user_id: userId, comment_id: commentId });
+    const comments = await utils.getComments(client);
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(JSON.stringify(comments));
     res.end();
   } else if (req.url === '/users') {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write(JSON.stringify(wsServer.clients.size));
+    let userNum = wsServer.clients.size;
+    userNum = userNum === 0 ? 1 : userNum; // 0 はおかしい...
+    res.write(JSON.stringify(userNum));
     res.end();
   } else if (req.url === '/messages') {
-    const comments = JSON.parse(
-      JSON.stringify(await client('comment').select())
-    );
+    const comments = await utils.getComments(client);
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(JSON.stringify(comments));
     res.end();

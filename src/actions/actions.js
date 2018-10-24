@@ -18,7 +18,6 @@ export const postComment = value => {
 export const getComments = async value => {
   const result = await axios.get('/messages');
   const messages = sortComments(value, result.data);
-
   return {
     type: constants.GET_ALL_COMMENTS,
     payload: messages
@@ -38,11 +37,11 @@ const sortComments = (value, comments) => {
   switch (value) {
     case '1':
       return comments.sort((a, b) => {
-        return a.id - b.id;
+        return new Date(b.created_at) - new Date(a.created_at);
       });
     case '2':
       return comments.sort((a, b) => {
-        return new Date(b.created_at) - new Date(a.created_at);
+        return a.id - b.id;
       });
     case '3':
       return comments.sort((a, b) => {
@@ -67,5 +66,11 @@ export const getUserNum = async () => {
   return {
     type: constants.GET_USER_NUM,
     payload: userNum
+  };
+};
+
+export const resetComment = () => {
+  return {
+    type: constants.RESET_COMMENT
   };
 };

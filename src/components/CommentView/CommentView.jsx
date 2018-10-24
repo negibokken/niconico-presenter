@@ -20,10 +20,22 @@ socket.addEventListener('open', e => {
   console.log('websocket connection open');
 });
 
+const socketListener = postComment => e => {
+  postComment(e.data);
+};
+
+const keyDownListener = onClick => e => {
+  if ((e.metaKey || e.ctrlKey) && e.keyCode === 13) {
+    onClick();
+  }
+};
+
 class CommentView extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.inputRef = React.createRef();
+    this.keyDownListener = keyDownListener(this.onClick);
+    this.socketListener = socketListener(props.postComment);
   }
   onClick = () => {
     if (!this.inputRef || !this.inputRef.current) {
@@ -36,15 +48,14 @@ class CommentView extends React.Component {
     this.inputRef.current.value = '';
   };
   componentDidMount = () => {
-    document.addEventListener('keydown', e => {
-      if ((e.metaKey || e.ctrlKey) && e.keyCode === 13) {
-        this.onClick();
-      }
-    });
-    socket.addEventListener('message', e => {
-      this.props.postComment(e.data);
-    });
+    document.addEventListener('keydown', this.keyDownListener);
+    socket.addEventListener('message', this.socketListener);
   };
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.keyDownListener);
+    socket.removeEventListener('message', this.socketListener);
+    this.props.resetComment();
+  }
   render() {
     const { comments } = this.props;
     return (

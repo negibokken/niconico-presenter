@@ -1,6 +1,20 @@
 version: '3.3'
 
 services:
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    links:
+      - niconico-presenter
+    restart: always
+    environment:
+      # STAGE: 'production'
+      STAGE: local
+      DOMAINS: 'example.com -> http://niconico-presenter:3000'
+      WEBSOCKET: 'true'
+      # FORCE_RENEW: 'true'
   db:
     image: mysql:5.7
     volumes:
