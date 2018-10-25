@@ -28,9 +28,26 @@ const getComments = async client => {
   return comments;
 };
 
+// const isAlreadyNiced = async (client, userId, commentId) => {
+//   const nice = await client('nices')
+//     .select()
+//     .where({
+//       user_id: userId,
+//       comment_id: commentId
+//     });
+//   return nice.length !== 0;
+// };
+//
+// export const insertNice = async (client, userId, commentId) => {
+//   if (!isAlreadyAdded(client, userId, commentId)) {
+//     await client('nices').insert({ user_id: userId, comment_id: commentId });
+//   }
+// };
+//
 // if (process.env.ENVIRONMENT === 'dev') {
 //   (async () => {
 //     await getComments(devClient);
+//     await isAlreadyNiced(devClient, 'aTAJIrAKHqBax97Ntzss9ANZzZxcgoeW', 1);
 //     process.exit(0);
 //   })();
 // }

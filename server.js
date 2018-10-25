@@ -93,6 +93,11 @@ server.on('request', async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(JSON.stringify(comments));
     res.end();
+  } else if (req.url === '/bannar.png') {
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    const file = await readFile('./build/bannar.png');
+    res.write(file);
+    res.end();
   } else if (req.url === '/index.js') {
     res.writeHead(200, { 'Content-Type': 'text/javascript' });
     const file = await readFile('./build/index.js');
