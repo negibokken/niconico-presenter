@@ -60,6 +60,18 @@ class CommentView extends React.Component {
     const { comments } = this.props;
     return (
       <div style={styles.container}>
+        <a href="https://ricoh-planets.appspot.com" target="_blank">
+          <img
+            alt="bannar"
+            src="bannar.png"
+            style={{
+              width: '130px',
+              position: 'absolute',
+              right: '10px',
+              bottom: '10px'
+            }}
+          />
+        </a>
         <div style={styles.input}>
           <FormControl fullWidth={true}>
             <Input
