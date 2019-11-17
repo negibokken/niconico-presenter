@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 'use strict';
 const WebSocketServer = require('ws').Server;
 const http = require('http');
@@ -6,7 +5,7 @@ const fs = require('fs');
 const log4js = require('log4js');
 log4js.configure({
   appenders: { cheese: { type: 'file', filename: 'cheese.log' } },
-  categories: { default: { appenders: ['cheese'], level: 'error' } }
+  categories: { default: { appenders: ['cheese'], level: 'error' } },
 });
 const logger = log4js.getLogger('cheese');
 const cookie = require('cookie');
@@ -20,11 +19,11 @@ const dbConfig = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   timezone: 'UTC+9:00',
-  charset: 'utf8mb4_unicode_ci'
+  charset: 'utf8mb4_unicode_ci',
 };
 const client = knex({
   client: 'mysql',
-  connection: dbConfig
+  connection: dbConfig,
 });
 
 var server = http.createServer();
@@ -65,8 +64,8 @@ server.on('request', async (req, res) => {
       'Set-Cookie',
       cookie.serialize('ID', userId, {
         httpOnly: true,
-        maxAge: 60 * 60 * 24 * 7 // 1 week
-      })
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      }),
     );
   }
   if (req.url === '/index.html' || req.url === '/') {
@@ -77,7 +76,10 @@ server.on('request', async (req, res) => {
   } else if (!!req.url.match(/\/messages\/(\d+)/)) {
     const matched = req.url.match(/\/messages\/(\d+)/);
     const commentId = matched[1];
-    await client('nices').insert({ user_id: userId, comment_id: commentId });
+    await client('nices').insert({
+      user_id: userId,
+      comment_id: commentId,
+    });
     const comments = await utils.getComments(client);
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.write(JSON.stringify(comments));
@@ -132,8 +134,8 @@ wsServer.on('connection', function(ws, req) {
         'Set-Cookie',
         cookie.serialize('ID', userId, {
           httpOnly: true,
-          maxAge: 60 * 60 * 24 * 7 // 1 week
-        })
+          maxAge: 60 * 60 * 24 * 7, // 1 week
+        }),
       );
     }
     cookies = cookie.parse(req.headers.cookie || '');
@@ -149,6 +151,6 @@ wsServer.on('connection', function(ws, req) {
   });
 });
 
-wsServer.on('close', function(e) {
+wsServer.on('close', function() {
   console.log('close');
 });
