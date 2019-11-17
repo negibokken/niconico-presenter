@@ -4,13 +4,13 @@ import { Input, Button, FormControl } from '@material-ui/core';
 
 const styles = {
   container: {
-    width: '100%'
+    width: '100%',
   },
   input: {
     width: '350px',
     margin: '0 auto',
-    marginTop: '10px'
-  }
+    marginTop: '10px',
+  },
 };
 
 const wsOrigin = window.location.origin.replace('http', 'ws');
@@ -58,20 +58,8 @@ class CommentView extends React.Component {
   }
   render() {
     const { comments } = this.props;
-    return (
+    retut trn (
       <div style={styles.container}>
-        <a href="https://ricoh-planets.appspot.com" target="_blank">
-          <img
-            alt="bannar"
-            src="bannar.png"
-            style={{
-              width: '130px',
-              position: 'absolute',
-              right: '10px',
-              bottom: '10px'
-            }}
-          />
-        </a>
         <div style={styles.input}>
           <FormControl fullWidth={true}>
             <Input
