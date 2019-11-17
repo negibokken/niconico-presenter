@@ -1,10 +1,15 @@
-# NicoNico Presenter
+# niconico presenter
 
 ## Run service
 
-```sh
-yarn docker:up
-```
+1. Run below commands
+
+    ```sh
+    yarn docker:build
+    yarn docker:up
+    ```
+
+2. Access `http://localhost:3000`
 
 ## Required
 
