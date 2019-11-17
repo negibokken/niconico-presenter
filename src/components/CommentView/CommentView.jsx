@@ -58,7 +58,7 @@ class CommentView extends React.Component {
   }
   render() {
     const { comments } = this.props;
-    retut trn (
+    return (
       <div style={styles.container}>
         <div style={styles.input}>
           <FormControl fullWidth={true}>
