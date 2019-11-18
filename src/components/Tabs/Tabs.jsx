@@ -13,8 +13,13 @@ const styles = theme => ({
     margin: '0',
     padding: '0',
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper
-  }
+    backgroundColor: theme.palette.background.paper,
+  },
+  user: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+  },
 });
 
 class SimpleTabs extends React.Component {
@@ -33,19 +38,21 @@ class SimpleTabs extends React.Component {
         <AppBar position="static">
           <Tabs value={tab} onChange={this.handleChange}>
             <Tab label="Flow" />
-            <Tab label="Comment List" />
+            {/*<Tab label="Comment List" />*/}
           </Tabs>
         </AppBar>
-        現在のユーザー数: {this.props.userNum}
         {tab === 0 && <CommentView />}
         {tab === 1 && <CommentList />}
+        <span className={classes.user}>
+          現在のユーザー数: {this.props.userNum}
+        </span>
       </div>
     );
   }
 }
 
 SimpleTabs.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(SimpleTabs);

@@ -1,15 +1,25 @@
 import React from 'react';
 import Comment from '../Comment/Comment';
+import CommentList from '../../containers/CommentList/CommentList';
 import { Input, Button, FormControl } from '@material-ui/core';
 
 const styles = {
   container: {
-    width: '100%',
+    width: '100vw',
+    position: 'fixed',
+    bottom: 0,
+  },
+  inputWrapper: {
+    width: '450px',
+    marginTop: '10px',
+    margin: '0 auto',
   },
   input: {
     width: '350px',
-    margin: '0 auto',
-    marginTop: '10px',
+  },
+  button: {
+    display: 'inline-block',
+    width: '100px',
   },
 };
 
@@ -59,28 +69,36 @@ class CommentView extends React.Component {
   render() {
     const { comments } = this.props;
     return (
-      <div style={styles.container}>
-        <div style={styles.input}>
-          <FormControl fullWidth={true}>
+      <div>
+        <div>
+          {comments
+            ? comments.map((v, i) => {
+                return <Comment key={i} message={v} />;
+              })
+            : undefined}
+        </div>
+        <CommentList style={{ position: 'fixed', right: 0 }} />
+
+        <div style={styles.container}>
+          <div style={styles.inputWrapper}>
             <Input
               autoFocus={true}
-              fullWidth={true}
+              fullWidth={false}
               multiline={true}
-              rowsMax={3}
+              rowsMax={1}
               placeholder={'コメント (ctrl (または cmd) + Enter で送信)'}
               inputRef={this.inputRef}
-              style={{ display: 'inline' }}
-            />{' '}
-            <Button variant="outlined" onClick={this.onClick}>
+              style={styles.input}
+            />
+            <Button
+              style={styles.button}
+              variant="outlined"
+              onClick={this.onClick}
+            >
               送信
             </Button>
-          </FormControl>
+          </div>
         </div>
-        {comments
-          ? comments.map((v, i) => {
-              return <Comment key={i} message={v} />;
-            })
-          : undefined}
       </div>
     );
   }

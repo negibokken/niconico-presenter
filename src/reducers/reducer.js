@@ -5,7 +5,7 @@ const initialState = {
   allComments: [],
   tab: 0,
   sortOption: '1',
-  userNum: 1
+  userNum: 1,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -26,7 +26,7 @@ export const reducer = (state = initialState, action) => {
       const { sortedComments, sortOption } = action.payload;
       return Object.assign({}, state, {
         allComments: sortedComments,
-        sortOption
+        sortOption,
       });
     case constants.GET_USER_NUM:
       return Object.assign({}, state, { userNum: action.payload });

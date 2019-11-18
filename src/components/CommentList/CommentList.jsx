@@ -6,27 +6,28 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   TextField,
-  Button
+  Button,
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import moment from 'moment';
 
 const styles = {
   container: {
-    width: '80%',
-    margin: '0 auto',
-    marginTop: '40px',
-    marginBottom: '40px'
+    width: '20vw',
+    height: '90vh',
+    position: 'fixed',
+    right: 0,
+    border: '1px #aaa solid',
   },
   list: {
     width: '100%',
     margin: '0 auto',
-    border: 'solid 1px #000'
+    border: 'solid 1px #000',
   },
   num: {
     fontSize: '50%',
-    width: '50px'
-  }
+    width: '50px',
+  },
 };
 
 const paddingTime = num => {
@@ -75,17 +76,17 @@ class CommentList extends React.Component {
             select
             value={sortOption}
             onChange={this.handleChange}
-            helperText="Please select sort Algorithm"
+            helperText="Please select order"
             margin="normal"
             style={{ marginLeft: '20px' }}
             SelectProps={{
-              native: true
+              native: true,
             }}
           >
             {[
               { value: 1, label: '最新順' },
               { value: 2, label: 'No.順' },
-              { value: 3, label: 'いいね順' }
+              { value: 3, label: 'いいね順' },
             ].map(option => {
               return (
                 <option key={option.value} value={option.value}>
@@ -116,7 +117,7 @@ class CommentList extends React.Component {
                 >
                   <ListItemText align={'left'} onClick={this.handleClick(v.id)}>
                     {`No: ${v.id} `} (ID:
-                    {v.user_id}) [{time}] <br />
+                    {v.user_id.slice(0, 10)}) [{time}] <br />
                     {v.content}
                   </ListItemText>
                   <ListItemSecondaryAction style={{ width: '100px' }}>
