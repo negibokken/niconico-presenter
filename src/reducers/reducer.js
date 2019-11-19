@@ -10,29 +10,37 @@ const initialState = {
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case constants.POST_COMMENT:
+    case constants.POST_COMMENT: {
       let comments = Array.prototype.concat(state.comments);
       comments.push(action.payload);
       return Object.assign({}, state, { comments });
-    case constants.GET_ALL_COMMENTS:
+    }
+    case constants.GET_ALL_COMMENTS: {
       const allComments = action.payload;
       return Object.assign({}, state, { allComments });
-    case constants.TOGGLE_TAB:
+    }
+    case constants.TOGGLE_TAB: {
       const tab = action.payload;
       return Object.assign({}, state, { tab });
-    case constants.ADD_NICE:
+    }
+    case constants.ADD_NICE: {
       return Object.assign({}, state, { allComments: action.payload });
-    case constants.SORT_COMMENT:
+    }
+    case constants.SORT_COMMENT: {
       const { sortedComments, sortOption } = action.payload;
       return Object.assign({}, state, {
         allComments: sortedComments,
         sortOption,
       });
-    case constants.GET_USER_NUM:
+    }
+    case constants.GET_USER_NUM: {
       return Object.assign({}, state, { userNum: action.payload });
-    case constants.RESET_COMMENT:
+    }
+    case constants.RESET_COMMENT: {
       return Object.assign({}, state, { comments: [] });
-    default:
+    }
+    default: {
       return state;
+    }
   }
 };
