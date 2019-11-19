@@ -1,25 +1,32 @@
 import { connect } from 'react-redux';
 import CommentView from '../../components/CommentView/CommentView';
-import { postComment, resetComment } from '../../actions/actions';
+import {
+  postComment,
+  resetComment,
+  numberOfClientUpdate,
+} from '../../actions/actions';
 
 const mapStateToProps = state => {
   return {
-    comments: state.comments
+    comments: state.comments,
+    allComments: state.allComments,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    postComment: value => {
-      dispatch(postComment(value));
+    socketMethods: {
+      postComment: value => {
+        dispatch(postComment(value));
+      },
+      numberOfClientUpdate: value => {
+        dispatch(numberOfClientUpdate(value));
+      },
     },
     resetComment: () => {
       dispatch(resetComment());
-    }
+    },
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CommentView);
+export default connect(mapStateToProps, mapDispatchToProps)(CommentView);

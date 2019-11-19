@@ -4,13 +4,14 @@ import {
   addNice,
   getComments,
   postComment,
-  sortComment
+  sortComment,
 } from '../../actions/actions';
 
 const mapStateToProps = state => {
   return {
     allComments: state.allComments,
-    sortOption: state.sortOption
+    comments: state.comments,
+    sortOption: state.sortOption,
   };
 };
 
@@ -27,11 +28,8 @@ const mapDispatchToProps = dispatch => {
     },
     sortComment: async (value, comments) => {
       dispatch(await sortComment(value, comments));
-    }
+    },
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CommentList);
+export default connect(mapStateToProps, mapDispatchToProps)(CommentList);

@@ -13,11 +13,12 @@ import moment from 'moment';
 
 const styles = {
   container: {
-    width: '20vw',
+    width: '25vw',
     height: '90vh',
     position: 'fixed',
     right: 0,
     border: '1px #aaa solid',
+    overflow: 'scroll',
   },
   list: {
     width: '100%',
@@ -120,9 +121,10 @@ class CommentList extends React.Component {
                     {v.user_id.slice(0, 10)}) [{time}] <br />
                     {v.content}
                   </ListItemText>
-                  <ListItemSecondaryAction style={{ width: '100px' }}>
+                  <ListItemSecondaryAction>
                     <IconButton
                       aria-label="ThumbUp"
+                      size="small"
                       onClick={this.handleClick(v.id)}
                     >
                       <ThumbUpIcon />

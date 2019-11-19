@@ -4,14 +4,14 @@ import axios from 'axios';
 export const toggleTabs = value => {
   return {
     type: constants.TOGGLE_TAB,
-    payload: value
+    payload: value,
   };
 };
 
 export const postComment = value => {
   return {
     type: constants.POST_COMMENT,
-    payload: value
+    payload: value,
   };
 };
 
@@ -20,16 +20,16 @@ export const getComments = async value => {
   const messages = sortComments(value, result.data);
   return {
     type: constants.GET_ALL_COMMENTS,
-    payload: messages
+    payload: messages,
   };
 };
 
 export const addNice = async (num, value) => {
   const result = await axios.post(`/messages/${num}`);
-  const messages = sortComments(value, result.data);
+  const messages = value ? sortComments(value, result.data) : result.data;
   return {
     type: constants.ADD_NICE,
-    payload: messages
+    payload: messages,
   };
 };
 
@@ -56,7 +56,7 @@ export const sortComment = async (value, comments) => {
   let sortedComments = sortComments(value, comments);
   return {
     type: constants.SORT_COMMENT,
-    payload: { sortedComments, sortOption: value }
+    payload: { sortedComments, sortOption: value },
   };
 };
 
@@ -65,12 +65,19 @@ export const getUserNum = async () => {
   const userNum = result.data;
   return {
     type: constants.GET_USER_NUM,
-    payload: userNum
+    payload: userNum,
   };
 };
 
 export const resetComment = () => {
   return {
-    type: constants.RESET_COMMENT
+    type: constants.RESET_COMMENT,
+  };
+};
+
+export const numberOfClientUpdate = num => {
+  return {
+    type: constants.NUMBER_OF_CLIENTS_UPDATE,
+    payload: num,
   };
 };

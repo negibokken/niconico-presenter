@@ -1,4 +1,7 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+import { addNice } from '../../actions/actions';
 
 class Comment extends React.Component {
   right = 0;
@@ -22,10 +25,22 @@ class Comment extends React.Component {
   componentWillUnmount() {
     clearInterval(this.timerID);
   }
+  onClickHandler = () => {
+    addNice(this.props.id);
+  };
   render() {
     return (
-      <div className="comment" ref="comment" style={{ whiteSpace: 'nowrap' }}>
-        {this.props.message}
+      <div
+        className="comment"
+        ref="comment"
+        style={{ zIndex: 2, whiteSpace: 'nowrap' }}
+        onClick={this.onClickHandler}
+      >
+        <Tooltip title="いいね" placement="bottom" ref="comment">
+          <Button style={{ textTransform: 'none' }}>
+            {this.props.message}
+          </Button>
+        </Tooltip>
       </div>
     );
   }

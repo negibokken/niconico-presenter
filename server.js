@@ -46,7 +46,21 @@ const addMessage = async (content, userId) => {
   if (content === '') {
     return;
   }
-  await client('comment').insert({ content, user_id: userId, nice: 0 });
+  const ids = await client('comment').insert({
+    content,
+    user_id: userId,
+    nice: 0,
+  });
+  const comment = JSON.parse(
+    JSON.stringify(
+      await client('comment')
+        .select()
+        .where({
+          id: ids[0],
+        }),
+    ),
+  );
+  return comment[0];
 };
 
 const wsServer = new WebSocketServer({ server, clientTracking: true });
@@ -80,9 +94,18 @@ server.on('request', async (req, res) => {
       user_id: userId,
       comment_id: commentId,
     });
-    const comments = await utils.getComments(client);
+    // const comment = await utils.getComments(client);
+    const comments = JSON.parse(
+      JSON.stringify(
+        await client('comment')
+          .select()
+          .where({
+            id: commentId,
+          }),
+      ),
+    );
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write(JSON.stringify(comments));
+    res.write(JSON.stringify(comments[0]));
     res.end();
   } else if (req.url === '/users') {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -125,6 +148,12 @@ server.on('request', async (req, res) => {
 });
 
 wsServer.on('connection', function(ws, req) {
+  wsServer.clients.forEach(client => {
+    if (client.readyState === 1) {
+      const nClients = wsServer.clients.size;
+      client.send(JSON.stringify({ type: 'client_number', value: nClients }));
+    }
+  });
   ws.on('message', async function(data) {
     logger.info('COMMENT POSTED:', data);
     let cookies = cookie.parse(req.headers.cookie || '');
@@ -139,10 +168,10 @@ wsServer.on('connection', function(ws, req) {
       );
     }
     cookies = cookie.parse(req.headers.cookie || '');
-    addMessage(data, cookies.ID);
+    const comment = await addMessage(data, cookies.ID);
     wsServer.clients.forEach(client => {
       if (client.readyState === 1) {
-        client.send(data);
+        client.send(JSON.stringify({ type: 'message', value: comment }));
       }
     });
   });

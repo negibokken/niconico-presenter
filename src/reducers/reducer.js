@@ -2,7 +2,13 @@ import { constants } from '../constants/constants';
 
 const initialState = {
   comments: [],
-  allComments: [],
+  allComments: [
+    {
+      id: 1,
+      user_id: 'dfadsfadsfadf',
+      content: 'hellowodfjads;lfjadsklfja;dslfdffadafdafddfajadf',
+    },
+  ],
   tab: 0,
   sortOption: '1',
   userNum: 1,
@@ -12,8 +18,13 @@ export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case constants.POST_COMMENT: {
       let comments = Array.prototype.concat(state.comments);
+      let allComments = JSON.parse(JSON.stringify(state.allComments));
       comments.push(action.payload);
-      return Object.assign({}, state, { comments });
+      allComments.push(action.payload);
+      return Object.assign({}, state, { comments, allComments });
+    }
+    case constants.NUMBER_OF_CLIENTS_UPDATE: {
+      return Object.assign({}, state, { userNum: action.payload });
     }
     case constants.GET_ALL_COMMENTS: {
       const allComments = action.payload;
@@ -24,7 +35,12 @@ export const reducer = (state = initialState, action) => {
       return Object.assign({}, state, { tab });
     }
     case constants.ADD_NICE: {
-      return Object.assign({}, state, { allComments: action.payload });
+      let allComments = Array.prototype.concat(state.allComments);
+      const cid = allComments.findIndex(v => v.id == action.payload);
+      if (cid != -1) {
+        allComments[cid] = action.payload;
+      }
+      return Object.assign({}, state, { allComments });
     }
     case constants.SORT_COMMENT: {
       const { sortedComments, sortOption } = action.payload;

@@ -30,8 +30,20 @@ socket.addEventListener('open', e => {
   console.log('websocket connection open');
 });
 
-const socketListener = postComment => e => {
-  postComment(e.data);
+const socketListener = socketMethods => e => {
+  const { postComment, numberOfClientUpdate } = socketMethods;
+  const data = JSON.parse(e.data);
+  console.log(data);
+  switch (data.type) {
+    case 'message': {
+      postComment(data.value);
+      break;
+    }
+    case 'client_number': {
+      numberOfClientUpdate(data.value);
+      break;
+    }
+  }
 };
 
 const keyDownListener = onClick => e => {
@@ -45,7 +57,7 @@ class CommentView extends React.Component {
     super(props);
     this.inputRef = React.createRef();
     this.keyDownListener = keyDownListener(this.onClick);
-    this.socketListener = socketListener(props.postComment);
+    this.socketListener = socketListener(props.socketMethods);
   }
   onClick = () => {
     if (!this.inputRef || !this.inputRef.current) {
@@ -73,11 +85,12 @@ class CommentView extends React.Component {
         <div>
           {comments
             ? comments.map((v, i) => {
-                return <Comment key={i} message={v} />;
+                return <Comment key={i} id={v.id} message={v.content} />;
               })
             : undefined}
         </div>
-        <CommentList style={{ position: 'fixed', right: 0 }} />
+
+        <CommentList />
 
         <div style={styles.container}>
           <div style={styles.inputWrapper}>
