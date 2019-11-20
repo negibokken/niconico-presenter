@@ -3,11 +3,12 @@ const WebSocketServer = require('ws').Server;
 const http = require('http');
 const fs = require('fs');
 const log4js = require('log4js');
-log4js.configure({
-  appenders: { cheese: { type: 'file', filename: 'cheese.log' } },
-  categories: { default: { appenders: ['cheese'], level: 'error' } },
-});
-const logger = log4js.getLogger('cheese');
+// log4js.configure({
+//   appenders: { cheese: { type: 'file', filename: 'cheese.log' } },
+//   categories: { default: { appenders: ['cheese'], level: 'error' } },
+// });
+const logger = log4js.getLogger();
+logger.level = 'info';
 const cookie = require('cookie');
 const knex = require('knex');
 const randomString = require('randomstring');
@@ -43,6 +44,7 @@ function readFile(filename) {
 }
 
 const addMessage = async (content, userId) => {
+  logger.info('[ADD_MESSAGE]:', userId, content);
   if (content === '') {
     return;
   }
@@ -66,7 +68,7 @@ const addMessage = async (content, userId) => {
 const wsServer = new WebSocketServer({ server, clientTracking: true });
 
 wsServer.on('open', request => {
-  logger.info('NEW USER OPEN CONNECTION:', request);
+  logger.info('[NEW_USER_OPEN_CONNECTION]:', request);
 });
 
 const countNice = async commentId => {
@@ -80,6 +82,20 @@ const countNice = async commentId => {
     ),
   )[0]['count(*)'];
   return niceNum;
+};
+
+const isAlreadyNiced = async (userId, commentId) => {
+  const niceNum = JSON.parse(
+    JSON.stringify(
+      await client('nices')
+        .count()
+        .where({
+          user_id: userId,
+          comment_id: commentId,
+        }),
+    ),
+  )[0]['count(*)'];
+  return niceNum >= 1;
 };
 
 server.on('request', async (req, res) => {
@@ -103,10 +119,23 @@ server.on('request', async (req, res) => {
   } else if (!!req.url.match(/\/messages\/(\d+)/)) {
     const matched = req.url.match(/\/messages\/(\d+)/);
     const commentId = matched[1];
-    await client('nices').insert({
-      user_id: userId,
-      comment_id: commentId,
-    });
+
+    // Increment
+    if (await isAlreadyNiced(userId, commentId)) {
+      logger.info('UNDO_NICE]:', userId, commentId);
+      await client('nices')
+        .del()
+        .where({
+          user_id: userId,
+          comment_id: commentId,
+        });
+    } else {
+      logger.info('[ADD_NICE]:', userId, commentId);
+      await client('nices').insert({
+        user_id: userId,
+        comment_id: commentId,
+      });
+    }
     const niceNum = await countNice(commentId);
     const comments = JSON.parse(
       JSON.stringify(
@@ -117,6 +146,8 @@ server.on('request', async (req, res) => {
           }),
       ),
     );
+
+    // Response
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     const comment = comments[0];
     comment.nice = niceNum;
@@ -163,14 +194,15 @@ server.on('request', async (req, res) => {
 });
 
 wsServer.on('connection', function(ws, req) {
+  const nClients = wsServer.clients.size;
+  logger.info('[CONNECTED_CLIENTS_NUM]:', nClients);
   wsServer.clients.forEach(client => {
     if (client.readyState === 1) {
-      const nClients = wsServer.clients.size;
       client.send(JSON.stringify({ type: 'client_number', value: nClients }));
     }
   });
   ws.on('message', async function(message) {
-    logger.info('COMMENT POSTED:', message);
+    logger.info('[MESSAGE_RECEIVED]:', message);
     let cookies = cookie.parse(req.headers.cookie || '');
     if (!cookies.ID) {
       const userId = randomString.generate();

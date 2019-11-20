@@ -28,7 +28,6 @@ export const getComments = async value => {
 export const addNice = async num => {
   const result = await axios.post(`/messages/${num}`);
   const comment = result.data;
-  // socket.send(JSON.stringify({ type: 'nice', value: num }));
   socket.send(JSON.stringify({ type: 'nice', value: num }));
   return {
     type: constants.ADD_NICE,
