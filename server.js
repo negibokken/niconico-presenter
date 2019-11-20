@@ -122,7 +122,7 @@ server.on('request', async (req, res) => {
 
     // Increment
     if (await isAlreadyNiced(userId, commentId)) {
-      logger.info('UNDO_NICE]:', userId, commentId);
+      logger.info('[UNDO_NICE]:', userId, commentId);
       await client('nices')
         .del()
         .where({
