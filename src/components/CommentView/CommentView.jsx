@@ -2,6 +2,7 @@ import React from 'react';
 import Comment from '../Comment/Comment';
 import CommentList from '../../containers/CommentList/CommentList';
 import { Input, Button, FormControl } from '@material-ui/core';
+import { socket } from '../../utils';
 
 const styles = {
   container: {
@@ -23,17 +24,13 @@ const styles = {
   },
 };
 
-const wsOrigin = window.location.origin.replace('http', 'ws');
-const socket = new WebSocket(wsOrigin, 'echo-protocol');
-
 socket.addEventListener('open', e => {
   console.log('websocket connection open');
 });
 
 const socketListener = socketMethods => e => {
-  const { postComment, numberOfClientUpdate } = socketMethods;
+  const { postComment, numberOfClientUpdate, updateNice } = socketMethods;
   const data = JSON.parse(e.data);
-  console.log(data);
   switch (data.type) {
     case 'message': {
       postComment(data.value);
@@ -41,6 +38,10 @@ const socketListener = socketMethods => e => {
     }
     case 'client_number': {
       numberOfClientUpdate(data.value);
+      break;
+    }
+    case 'nice_update': {
+      updateNice(data.value.commentId, data.value.nice);
       break;
     }
   }
@@ -66,7 +67,9 @@ class CommentView extends React.Component {
     if (this.inputRef.current.value === '') {
       return;
     }
-    socket.send(this.inputRef.current.value);
+    socket.send(
+      JSON.stringify({ type: 'message', value: this.inputRef.current.value }),
+    );
     this.inputRef.current.value = '';
   };
   componentDidMount = () => {
@@ -85,7 +88,14 @@ class CommentView extends React.Component {
         <div>
           {comments
             ? comments.map((v, i) => {
-                return <Comment key={i} id={v.id} message={v.content} />;
+                return (
+                  <Comment
+                    key={i}
+                    id={v.id}
+                    message={v.content}
+                    addNice={this.props.addNice}
+                  />
+                );
               })
             : undefined}
         </div>

@@ -1,4 +1,5 @@
 import { constants } from '../constants/constants';
+import { socket } from '../utils';
 import axios from 'axios';
 
 export const toggleTabs = value => {
@@ -24,16 +25,25 @@ export const getComments = async value => {
   };
 };
 
-export const addNice = async (num, value) => {
+export const addNice = async num => {
   const result = await axios.post(`/messages/${num}`);
-  const messages = value ? sortComments(value, result.data) : result.data;
+  const comment = result.data;
+  // socket.send(JSON.stringify({ type: 'nice', value: num }));
+  socket.send(JSON.stringify({ type: 'nice', value: num }));
   return {
     type: constants.ADD_NICE,
-    payload: messages,
+    payload: comment,
   };
 };
 
-const sortComments = (value, comments) => {
+export const updateNice = (commentId, niceNum) => {
+  return {
+    type: constants.UPDATE_NICE,
+    payload: { commentId, niceNum },
+  };
+};
+
+export const sortComments = (value, comments) => {
   switch (value) {
     case '1':
       return comments.sort((a, b) => {

@@ -1,4 +1,5 @@
 import { constants } from '../constants/constants';
+import { sortComments } from '../actions/actions';
 
 const initialState = {
   comments: [],
@@ -21,6 +22,7 @@ export const reducer = (state = initialState, action) => {
       let allComments = JSON.parse(JSON.stringify(state.allComments));
       comments.push(action.payload);
       allComments.push(action.payload);
+      allComments = sortComments(state.sortOption, allComments);
       return Object.assign({}, state, { comments, allComments });
     }
     case constants.NUMBER_OF_CLIENTS_UPDATE: {
@@ -36,10 +38,20 @@ export const reducer = (state = initialState, action) => {
     }
     case constants.ADD_NICE: {
       let allComments = Array.prototype.concat(state.allComments);
-      const cid = allComments.findIndex(v => v.id == action.payload);
+      const cid = allComments.findIndex(v => v.id == action.payload.id);
       if (cid != -1) {
         allComments[cid] = action.payload;
       }
+      allComments = sortComments(state.sortOption, allComments);
+      return Object.assign({}, state, { allComments });
+    }
+    case constants.UPDATE_NICE: {
+      let allComments = Array.prototype.concat(state.allComments);
+      const cid = allComments.findIndex(v => v.id == action.payload.commentId);
+      if (cid != -1) {
+        allComments[cid].nice = action.payload.niceNum;
+      }
+      allComments = sortComments(state.sortOption, allComments);
       return Object.assign({}, state, { allComments });
     }
     case constants.SORT_COMMENT: {

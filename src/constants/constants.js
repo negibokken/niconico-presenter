@@ -7,4 +7,5 @@ export const constants = {
   GET_USER_NUM: 6,
   RESET_COMMENT: 7,
   NUMBER_OF_CLIENTS_UPDATE: 8,
+  UPDATE_NICE: 9,
 };

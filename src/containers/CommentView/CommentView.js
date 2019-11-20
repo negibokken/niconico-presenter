@@ -4,6 +4,8 @@ import {
   postComment,
   resetComment,
   numberOfClientUpdate,
+  addNice,
+  updateNice,
 } from '../../actions/actions';
 
 const mapStateToProps = state => {
@@ -22,9 +24,15 @@ const mapDispatchToProps = dispatch => {
       numberOfClientUpdate: value => {
         dispatch(numberOfClientUpdate(value));
       },
+      updateNice: (commentId, nice) => {
+        dispatch(updateNice(commentId, nice));
+      },
     },
     resetComment: () => {
       dispatch(resetComment());
+    },
+    addNice: async comment_id => {
+      dispatch(await addNice(comment_id));
     },
   };
 };

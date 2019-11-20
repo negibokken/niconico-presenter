@@ -26,7 +26,7 @@ class Comment extends React.Component {
     clearInterval(this.timerID);
   }
   onClickHandler = () => {
-    addNice(this.props.id);
+    this.props.addNice(this.props.id);
   };
   render() {
     return (

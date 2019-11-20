@@ -69,6 +69,19 @@ wsServer.on('open', request => {
   logger.info('NEW USER OPEN CONNECTION:', request);
 });
 
+const countNice = async commentId => {
+  const niceNum = JSON.parse(
+    JSON.stringify(
+      await client('nices')
+        .count()
+        .where({
+          comment_id: commentId,
+        }),
+    ),
+  )[0]['count(*)'];
+  return niceNum;
+};
+
 server.on('request', async (req, res) => {
   let cookies = cookie.parse(req.headers.cookie || '');
   let userId = cookies.ID;
@@ -94,7 +107,7 @@ server.on('request', async (req, res) => {
       user_id: userId,
       comment_id: commentId,
     });
-    // const comment = await utils.getComments(client);
+    const niceNum = await countNice(commentId);
     const comments = JSON.parse(
       JSON.stringify(
         await client('comment')
@@ -105,7 +118,9 @@ server.on('request', async (req, res) => {
       ),
     );
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.write(JSON.stringify(comments[0]));
+    const comment = comments[0];
+    comment.nice = niceNum;
+    res.write(JSON.stringify(comment));
     res.end();
   } else if (req.url === '/users') {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -154,8 +169,8 @@ wsServer.on('connection', function(ws, req) {
       client.send(JSON.stringify({ type: 'client_number', value: nClients }));
     }
   });
-  ws.on('message', async function(data) {
-    logger.info('COMMENT POSTED:', data);
+  ws.on('message', async function(message) {
+    logger.info('COMMENT POSTED:', message);
     let cookies = cookie.parse(req.headers.cookie || '');
     if (!cookies.ID) {
       const userId = randomString.generate();
@@ -168,12 +183,35 @@ wsServer.on('connection', function(ws, req) {
       );
     }
     cookies = cookie.parse(req.headers.cookie || '');
-    const comment = await addMessage(data, cookies.ID);
-    wsServer.clients.forEach(client => {
-      if (client.readyState === 1) {
-        client.send(JSON.stringify({ type: 'message', value: comment }));
+
+    const data = JSON.parse(message);
+    // Update number of nice
+    switch (data.type) {
+      case 'nice': {
+        const niceNum = await countNice(data.value);
+        wsServer.clients.forEach(client => {
+          if (client.readyState === 1) {
+            client.send(
+              JSON.stringify({
+                type: 'nice_update',
+                value: { nice: niceNum, commentId: data.value },
+              }),
+            );
+          }
+        });
+        return;
       }
-    });
+
+      case 'message': {
+        const comment = await addMessage(data.value, cookies.ID);
+        wsServer.clients.forEach(client => {
+          if (client.readyState === 1) {
+            client.send(JSON.stringify({ type: 'message', value: comment }));
+          }
+        });
+        return;
+      }
+    }
   });
   wsServer.on('error', function(e) {
     logger.error('WebSocket Server Error.', JSON.stringify(e));
