@@ -5,6 +5,7 @@ import { addNice } from '../../actions/actions';
 
 class Comment extends React.Component {
   right = 0;
+  isNiced = false;
   move() {
     const comment = this.refs.comment;
     const rect = comment.getBoundingClientRect();
@@ -27,13 +28,22 @@ class Comment extends React.Component {
   }
   onClickHandler = () => {
     this.props.addNice(this.props.id);
+    this.isNiced = !this.isNiced;
+  };
+  getColor = () => {
+    const colors = {
+      normal: 'rgba(255, 255, 255, 0)',
+      niced: 'rgba(255, 0, 0, 0.3)',
+    };
+    return this.isNiced ? colors.niced : colors.normal;
   };
   render() {
+    const backgroundColor = this.getColor();
     return (
       <div
         className="comment"
         ref="comment"
-        style={{ zIndex: 2, whiteSpace: 'nowrap' }}
+        style={{ zIndex: 2, whiteSpace: 'nowrap', backgroundColor }}
         onClick={this.onClickHandler}
       >
         <Tooltip title="いいね" placement="bottom" ref="comment">
